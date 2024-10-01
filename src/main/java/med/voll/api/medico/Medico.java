@@ -4,15 +4,14 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import med.voll.api.endereco.DadosEndereco;
 import med.voll.api.endereco.Endereco;
 
 @Entity(name = "Medico")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "medico")
-public class medico {
+@Table(name = "medicos")
+public class Medico {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,8 +23,14 @@ public class medico {
     private Especialidade especialidade;
 
     @Embedded
-    private Endereco Endereco;
+    private Endereco endereco;
 
 
-
+    public Medico(DadosCadastroMedico dados) {
+        this.nome = dados.nome();
+        this.email = dados.email();
+        this.crm = dados.crm();
+        this.especialidade = dados.especialidade();
+        this.endereco = new Endereco(dados.endereco());
+    }
 }
