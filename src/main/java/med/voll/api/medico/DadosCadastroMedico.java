@@ -16,6 +16,10 @@ public record DadosCadastroMedico(
         @Email
         String email,
         @NotBlank
+       // @Pattern(regexp = "\\(\\d{2}\\) \\d{5}-\\d{4}")
+        String telefone,
+
+        @NotBlank
         @Pattern(regexp = "\\d{4,6}")
         String crm,
         @Enumerated(EnumType.STRING)
