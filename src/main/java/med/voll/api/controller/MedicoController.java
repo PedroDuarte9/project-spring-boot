@@ -11,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("medicos")
@@ -46,8 +44,15 @@ public class MedicoController {
 
     @GetMapping("/lista")
     public Page<DadosRetornoMedico> listarMedicos(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){
-        return medicoRepository.findAll(paginacao).map(DadosRetornoMedico::new);
+        return medicoRepository.findAll(paginacao).map((d) -> new DadosRetornoMedico(d));
 
+    }
+//É importante que o Id sempre apareça nas requisções de GEt que possam aparecer para ser passados na hora de atualizar os dados de algo ou alguém
+    @PutMapping("/editar")
+    @Transactional
+     public void atualizarMedicos(@RequestBody @Valid DadosUpdateMedico dadosUpdateMedico){
+        Medico medico = medicoRepository.getReferenceById(dadosUpdateMedico.id());
+        medico.atualizarInformacoes(dadosUpdateMedico);
     }
 
 //    @GetMapping("/individual/{id}")
