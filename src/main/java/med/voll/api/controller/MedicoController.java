@@ -11,6 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 
 @RestController
 @RequestMapping("medicos")
@@ -44,8 +48,9 @@ public class MedicoController {
 
     @GetMapping("/lista")
     public Page<DadosRetornoMedico> listarMedicos(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){
-        return medicoRepository.findAll(paginacao).map((d) -> new DadosRetornoMedico(d));
-
+        return medicoRepository
+        .findAllByAtivoTrue(paginacao) // Existe um padrão de nomenclatura do Spring Data que se a gente criar um método com determinado padrão de nomenclatura, o Spring consegue criar a query pra gente.
+        .map((d) -> new DadosRetornoMedico(d));
     }
 //É importante que o Id sempre apareça nas requisções de GEt que possam aparecer para ser passados na hora de atualizar os dados de algo ou alguém
     @PutMapping("/editar")
@@ -55,10 +60,16 @@ public class MedicoController {
         medico.atualizarInformacoes(dadosUpdateMedico);
     }
 
+    @DeleteMapping("excluir/{id}")
+    @Transactional
+    public void excluir(@PathVariable Long id){
+        Medico medico = medicoRepository.getReferenceById(id);
+        medico.excluir();
+
+    }
+
 //    @GetMapping("/individual/{id}")
 //    public Medico getMedicoId(@PathVariable("id") String id){
 //         return medicoRepository.findById()
 //    }
-
-
 }
